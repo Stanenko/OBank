@@ -46,6 +46,10 @@
     transform: translateY(50%);
     transition: transform 0.3s ease-in-out;
     z-index: 2;
+
+    /* Добавляем поддержку скроллинга на iOS */
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
 }
 
 .scrolled {
@@ -349,9 +353,36 @@
         document.addEventListener("DOMContentLoaded", function () {
             const scrollableContent = document.querySelector(".scrollable-content");
     
+            let startY = 0;
+            let isDragging = false;
+    
+            // Обрабатываем касание на мобильных устройствах
+            scrollableContent.addEventListener("touchstart", function (event) {
+                startY = event.touches[0].clientY;
+                isDragging = true;
+            });
+    
+            scrollableContent.addEventListener("touchmove", function (event) {
+                if (!isDragging) return;
+                
+                let scrollPosition = scrollableContent.scrollTop;
+                let threshold = 50; // Количество пикселей, после которых начинается эффект
+                
+                if (scrollPosition > threshold) {
+                    scrollableContent.classList.add("scrolled");
+                } else {
+                    scrollableContent.classList.remove("scrolled");
+                }
+            });
+    
+            scrollableContent.addEventListener("touchend", function () {
+                isDragging = false;
+            });
+    
+            // Обрабатываем скролл на всех устройствах
             scrollableContent.addEventListener("scroll", function () {
                 let scrollPosition = scrollableContent.scrollTop;
-                let threshold = 100; // Количество пикселей, после которых начинается эффект
+                let threshold = 50;
     
                 if (scrollPosition > threshold) {
                     scrollableContent.classList.add("scrolled");
@@ -361,6 +392,7 @@
             });
         });
     </script>
+    
     
 </body>
 </html>
