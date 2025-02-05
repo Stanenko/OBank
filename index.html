@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Дохідний онлайн</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #F3F2F8;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .fixed-container {
+    position: absolute; /* Раньше было fixed */
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #F3F2F8;
+    padding: 20px 0;
+    text-align: center;
+    z-index: 1; /* Сделать его ниже */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.scrollable-content {
+    position: relative; /* Добавить relative */
+    top: 250px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow-y: auto;
+    background: white;
+    padding: 20px;
+    box-shadow: 0px -10px 20px rgba(0, 0, 0, 0.1);
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    z-index: 2; /* Увеличить, чтобы перекрывало верх */
+}
+
+
+        .header {
+            font-size: 18px;
+            font-weight: bold;
+            color: #000;
+            margin-bottom: 10px;
+        }
+
+        .fixed-section {
+            font-size: 32px;
+            font-weight: bold;
+            color: #000;
+            margin-bottom: 10px;
+        }
+
+        .subtext {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .icon-buttons {
+            display: flex;
+            justify-content: center;
+            margin-top: 15px;
+            gap: 15px;
+        }
+
+        .icon-button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 80px;
+            height: 80px;
+            background: #F0B4E6;
+            border-radius: 50%;
+            font-size: 14px;
+            font-weight: bold;
+            color: #000;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .icon-button.active {
+            background: #C2185B;
+            color: white;
+        }
+        .icon-buttons-img {
+    width: 100%;
+    max-width: 400px; /* Настроить по размеру */
+    display: block;
+    margin-bottom: 0 auto;
+    margin-bottom: 30px;
+}
+
+
+        .date-header {
+            font-size: 14px;
+            color: #999;
+            text-align: center;
+            margin-bottom: 10px;
+            margin-top: 10px;
+        }
+
+        .entry {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+        }
+
+        .entry-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .blue-dots {
+            display: grid;
+            grid-template-columns: repeat(2, auto);
+            gap: 2px;
+            margin-right: 15px;
+        }
+
+        .dot {
+            width: 7px;
+            height: 7px;
+            background: #0082FF;
+            border-radius: 50%;
+        }
+
+        .entry-title {
+            font-size: 14px;
+            color: #000;
+            font-weight: bold;
+        }
+
+        .entry-bank {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .entry-amount {
+            font-size: 16px;
+        }
+        .spacer {
+    height: 30px; /* Регулируй высоту для нужного отступа */
+}
+
+        .positive {
+            color: #27AE60;
+        }
+
+        .negative {
+            color: #E74C3C;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="fixed-container">
+            <div class="header">Дохідний онлайн 16,5%</div>
+            <div class="fixed-section">
+                400 000.00 ₴
+                <div class="subtext">Депозит дійсний до: 06.11.2025</div>
+            </div>
+            <div class="icon-buttons">
+                <img src="buttons.jpg" alt="Кнопки" class="icon-buttons-img">
+            </div>            
+        </div>
+
+        <div class="spacer"></div>
+
+        <div class="scrollable-content">
+            <div class="date-header">31 Січня 2025</div>
+            <div class="entry">
+                <div class="entry-left">
+                    <div class="blue-dots">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                    </div>
+                    <div>
+                        <div class="entry-title">Нарахування %</div>
+                        <div class="entry-bank">Ідея Банк</div>
+                    </div>
+                </div>
+                <div class="entry-amount positive">5 605.48 ₴</div>
+            </div>
+            <div class="entry">
+                <div class="entry-left">
+                    <div class="blue-dots">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                    </div>
+                <div>
+                    <div class="entry-title">Утримання податків</div>
+                    <div class="entry-bank">Ідея Банк</div>
+                </div>
+            </div>
+                <div class="entry-amount negative">-1 065.04 ₴</div>
+            </div>
+            <div class="entry">
+                <div class="entry-left">
+                    <div class="blue-dots">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                    </div>
+                <div>
+                    <div class="entry-title">Утримання податків</div>
+                    <div class="entry-bank">Ідея Банк</div>
+                </div>
+            </div>
+                <div class="entry-amount negative">-284.24 ₴</div>
+            </div>
+
+            <div class="date-header">30 Листопада 2024</div>
+            <div class="entry">
+                <div class="entry-left">
+                    <div class="blue-dots">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                    </div>
+                    <div>
+                        <div class="entry-title">Нарахування %</div>
+                        <div class="entry-bank">Ідея Банк</div>
+                    </div>
+                </div>
+                <div class="entry-amount positive">4 520.55 ₴</div>
+            </div>
+            <div class="entry">
+                <div class="entry-left">
+                    <div class="blue-dots">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                    </div>
+                <div>
+                    <div class="entry-title">Утримання податків</div>
+                    <div class="entry-bank">Ідея Банк</div>
+                </div>
+            </div>
+                <div class="entry-amount negative">-858.90 ₴</div>
+            </div>
+            <div class="entry">
+                <div class="entry-left">
+                    <div class="blue-dots">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                    </div>
+                <div>
+                    <div class="entry-title">Утримання податків</div>
+                    <div class="entry-bank">Ідея Банк</div>
+                </div>
+            </div>
+                <div class="entry-amount negative">-230.32 ₴</div>
+            </div>
+
+            <div class="date-header">31 Грудня 2024</div>
+            <div class="entry">
+                <div class="entry-left">
+                    <div class="blue-dots">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                    </div>
+                    <div>
+                        <div class="entry-title">Нарахування %</div>
+                        <div class="entry-bank">Ідея Банк</div>
+                    </div>
+                </div>
+                <div class="entry-amount positive">5 424.66 ₴</div>
+            </div>
+            <div class="entry">
+                <div class="entry-left">
+                    <div class="blue-dots">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                    </div>
+                <div>
+                    <div class="entry-title">Утримання податків</div>
+                    <div class="entry-bank">Ідея Банк</div>
+                </div>
+            </div>
+                <div class="entry-amount negative">-1 030.68 ₴</div>
+            </div>
+            <div class="entry">
+                <div class="entry-left">
+                    <div class="blue-dots">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                    </div>
+                <div>
+                    <div class="entry-title">Утримання податків</div>
+                    <div class="entry-bank">Ідея Банк</div>
+                </div>
+            </div>
+                <div class="entry-amount negative">-276.39 ₴</div>
+            </div>
+
+            <div class="date-header">05 Листопада 2024</div>
+            <div class="entry">
+                <div class="entry-left">
+                    <div class="blue-dots">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                    </div>
+                <div>
+                    <div class="entry-title">Зарахування коштів</div>
+                    <div class="entry-bank">Ідея Банк</div>
+                </div>
+            </div>
+                <div class="entry-amount positive">400 000.00 ₴</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
