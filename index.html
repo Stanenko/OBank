@@ -32,18 +32,24 @@
 }
 
 .scrollable-content {
-    position: relative; /* Добавить relative */
-    top: 250px;
+    position: fixed;
     left: 0;
     right: 0;
     bottom: 0;
+    height: 100vh;
     overflow-y: auto;
     background: white;
     padding: 20px;
     box-shadow: 0px -10px 20px rgba(0, 0, 0, 0.1);
     border-top-left-radius: 20px;
     border-top-right-radius: 20px;
-    z-index: 2; /* Увеличить, чтобы перекрывало верх */
+    transform: translateY(50%);
+    transition: transform 0.3s ease-in-out;
+    z-index: 2;
+}
+
+.scrolled {
+    transform: translateY(0);
 }
 
 
@@ -338,5 +344,23 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const scrollableContent = document.querySelector(".scrollable-content");
+    
+            scrollableContent.addEventListener("scroll", function () {
+                let scrollPosition = scrollableContent.scrollTop;
+                let threshold = 100; // Количество пикселей, после которых начинается эффект
+    
+                if (scrollPosition > threshold) {
+                    scrollableContent.classList.add("scrolled");
+                } else {
+                    scrollableContent.classList.remove("scrolled");
+                }
+            });
+        });
+    </script>
+    
 </body>
 </html>
