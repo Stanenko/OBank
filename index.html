@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Дохідний онлайн</title>
     <style>
+         html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            -webkit-overflow-scrolling: touch; /* Поддержка плавного скролла в Safari */
+        }
+
         body {
             font-family: 'Arial', sans-serif;
             margin: 0;
@@ -12,12 +20,6 @@
             background-color: #F3F2F8;
             overflow: hidden;
         }
-        html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    overflow: hidden;
-}
 
 
         .container {
@@ -38,27 +40,27 @@
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.scrollable-content {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 100vh;
-    overflow-y: auto;
-    background: white;
-    padding: 20px;
-    box-shadow: 0px -10px 20px rgba(0, 0, 0, 0.1);
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
-    transform: translateY(50%);
-    transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1); /* Более мягкое ускорение и замедление */
-    z-index: 2;
-
-    /* Добавляем поддержку скроллинга на iOS */
-    -webkit-overflow-scrolling: touch;
-    touch-action: pan-y;
-}
-
+ .scrollable-content {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 100vh;
+            min-height: 100%;
+            overflow-y: auto;
+            background: white;
+            padding: 20px;
+            box-shadow: 0px -10px 20px rgba(0, 0, 0, 0.1);
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            transform: translateY(calc(50vh - 50px)); /* Более плавное поведение */
+            transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1); /* Улучшенный эффект */
+            z-index: 2;
+            -webkit-overflow-scrolling: touch; /* Поддержка скроллинга в Safari */
+            touch-action: pan-y;
+            -webkit-touch-callout: none;
+            user-select: none;
+        }
 
 .scrolled {
     transform: translateY(0);
@@ -360,38 +362,14 @@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const scrollableContent = document.querySelector(".scrollable-content");
-    
-            let startY = 0;
-            let isDragging = false;
-    
-            // Обрабатываем касание на мобильных устройствах
-            scrollableContent.addEventListener("touchstart", function (event) {
-                startY = event.touches[0].clientY;
-                isDragging = true;
-            });
-    
-            scrollableContent.addEventListener("touchmove", function (event) {
-                if (!isDragging) return;
-                
-                let scrollPosition = scrollableContent.scrollTop;
-                let threshold = 50; // Количество пикселей, после которых начинается эффект
-                
-                if (scrollPosition > threshold) {
-                    scrollableContent.classList.add("scrolled");
-                } else {
-                    scrollableContent.classList.remove("scrolled");
-                }
-            });
-    
-            scrollableContent.addEventListener("touchend", function () {
-                isDragging = false;
-            });
-    
-            // Обрабатываем скролл на всех устройствах
+
+            // Принудительно активируем scroll в Safari
+            scrollableContent.style.overflowY = "scroll";
+
             scrollableContent.addEventListener("scroll", function () {
                 let scrollPosition = scrollableContent.scrollTop;
-                let threshold = 50;
-    
+                let threshold = 50; // После какого расстояния начинаем эффект
+
                 if (scrollPosition > threshold) {
                     scrollableContent.classList.add("scrolled");
                 } else {
