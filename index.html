@@ -1,591 +1,486 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Дохідний онлайн</title>
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      overflow: hidden;
-      -webkit-overflow-scrolling: touch;
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<title>О.Депозит онлайн</title>
+<style>
+  :root{
+    --bg:#F1F0F6;
+    --sheet:#FFFFFF;
+    --text:#111114;
+    --muted:#9A9AA2;
+    --sub:#8E8E96;
+    --blue:#159BFF;
+    --green:#12B24A;
+    --red:#F5352B;
+    --pink:#DB8BB8;
+    --magenta:#C1178E;
+    --divider:#F0F0F3;
+  }
 
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #F3F2F8;
-      overflow: hidden;
-    }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 
-    .container {
-      position: relative;
-      height: 100vh;
-      overflow: hidden;
-    }
+  html,body{
+    margin:0; padding:0;
+    height:100%;
+    overflow:hidden;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    -webkit-font-smoothing:antialiased;
+  }
 
-    .fixed-container {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      background: #F3F2F8;
-      padding: 20px 0;
-      text-align: center;
-      z-index: 2;
-      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    }
+  .app{
+    position:relative;
+    height:100dvh;
+    width:100%;
+    max-width:480px;
+    margin:0 auto;
+    overflow:hidden;
+    background:var(--bg);
+  }
 
-    .scrollable-content {
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      top: 220px;
+  /* ---------- FIXED TOP AREA ---------- */
+  .top{
+    position:absolute;
+    top:0; left:0; right:0;
+    padding:14px 22px 0;
+    z-index:1;
+  }
 
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
+  .nav{
+    display:flex;
+    align-items:center;
+    gap:18px;
+    height:52px;
+  }
+  .nav .back{
+    width:26px; height:26px;
+    flex:0 0 auto;
+    display:flex; align-items:center;
+    cursor:pointer;
+  }
+  .nav .back svg{ width:24px; height:24px; stroke:#111; }
+  .nav .title{
+    font-size:21px;
+    font-weight:700;
+    letter-spacing:-.2px;
+  }
 
-      background: white;
-      padding: 20px;
-      box-shadow: 0px -10px 20px rgba(0, 0, 0, 0.1);
-      border-top-left-radius: 20px;
-      border-top-right-radius: 20px;
+  .amount{
+    margin-top:52px;
+    font-size:46px;
+    font-weight:800;
+    letter-spacing:-1px;
+    line-height:1;
+  }
+  .amount .cur{ font-weight:800; }
 
-      transform: translateY(calc(50vh - 50px));
-      transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+  .valid{
+    margin-top:20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    font-size:17px;
+  }
+  .valid .label{ color:var(--muted); font-weight:400; }
+  .valid .date{ color:#111; font-weight:400; }
 
-      z-index: 3;
-      touch-action: pan-y;
-      -webkit-touch-callout: none;
-      user-select: none;
-    }
+  /* ---------- ACTION BUTTONS ---------- */
+  .actions{
+    margin-top:46px;
+    display:flex;
+    justify-content:space-between;
+    padding:0 12px;
+  }
+  .action{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:12px;
+    width:33%;
+    cursor:pointer;
+  }
+  .circle{
+    width:78px; height:78px;
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .circle svg{ width:30px; height:30px; stroke:#fff; fill:none; stroke-width:2; }
+  .circle.pink{ background:var(--pink); }
+  .circle.magenta{ background:var(--magenta); }
+  .circle.magenta .dots{ display:flex; gap:7px; }
+  .circle.magenta .dots i{ width:9px; height:9px; border-radius:50%; background:#fff; display:block; }
 
-    .scrolled {
-      transform: translateY(0);
-    }
+  .action .cap{
+    font-size:15px;
+    text-align:center;
+    line-height:1.25;
+    color:var(--muted);
+  }
+  .action .cap.dark{ color:#111; }
 
-    .header {
-      font-size: 18px;
-      font-weight: bold;
-      color: #000;
-      margin-bottom: 10px;
-    }
+  /* ---------- BOTTOM SHEET ---------- */
+  .sheet{
+    position:absolute;
+    left:0; right:0;
+    top:0;
+    height:100dvh;
+    background:var(--sheet);
+    border-top-left-radius:26px;
+    border-top-right-radius:26px;
+    box-shadow:0 -10px 30px rgba(0,0,0,.10);
+    z-index:5;
+    will-change:transform;
+    transform:translateY(var(--sheet-collapsed));
+    transition:transform .5s cubic-bezier(.22,1,.36,1);
+    display:flex;
+    flex-direction:column;
+    touch-action:none;
+  }
 
-    .fixed-section {
-      font-size: 32px;
-      font-weight: bold;
-      color: #000;
-      margin-bottom: 10px;
-    }
+  .grabber-zone{
+    flex:0 0 auto;
+    padding-top:10px;
+    cursor:grab;
+  }
+  .grabber{
+    width:40px; height:5px;
+    border-radius:5px;
+    background:#E2E2E8;
+    margin:0 auto 6px;
+  }
 
-    .subtext {
-      font-size: 14px;
-      color: #666;
-    }
+  .sheet-head{
+    flex:0 0 auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+    padding:10px 20px 14px;
+  }
+  .sheet-head .hdate{
+    font-size:16px;
+    color:var(--muted);
+    font-weight:400;
+  }
+  .sheet-head .search{
+    position:absolute;
+    right:16px; top:2px;
+    width:44px; height:44px;
+    border-radius:50%;
+    background:#F4F4F7;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .sheet-head .search svg{ width:20px; height:20px; stroke:#3a3a3f; fill:none; stroke-width:2; }
 
-    .icon-buttons {
-      display: flex;
-      justify-content: center;
-      margin-top: 15px;
-      gap: 15px;
-    }
+  .list{
+    flex:1 1 auto;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+    padding:0 20px 60px;
+    overscroll-behavior:contain;
+  }
+  .list.locked{ overflow:hidden; }
 
-    .icon-buttons-img {
-      width: 100%;
-      max-width: 400px;
-      display: block;
-      margin: 0 auto 30px;
-    }
+  .day{
+    text-align:center;
+    color:var(--muted);
+    font-size:16px;
+    padding:26px 0 20px;
+  }
 
-    .date-header {
-      font-size: 14px;
-      color: #999;
-      text-align: center;
-      margin-bottom: 10px;
-      margin-top: 10px;
-    }
+  .row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:14px 0;
+  }
+  .row-left{ display:flex; align-items:center; gap:16px; }
 
-    .entry {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 15px;
-    }
+  .dots4{
+    display:grid;
+    grid-template-columns:repeat(2,10px);
+    grid-auto-rows:10px;
+    gap:5px;
+    flex:0 0 auto;
+  }
+  .dots4 span{ width:10px; height:10px; border-radius:50%; background:var(--blue); }
 
-    .entry-left {
-      display: flex;
-      align-items: center;
-    }
+  .row-title{ font-size:18px; font-weight:700; letter-spacing:-.2px; }
+  .row-bank{ font-size:15px; color:var(--muted); margin-top:3px; }
 
-    .blue-dots {
-      display: grid;
-      grid-template-columns: repeat(2, auto);
-      gap: 2px;
-      margin-right: 15px;
-    }
+  .row-amt{ font-size:18px; font-weight:600; white-space:nowrap; }
+  .pos{ color:var(--green); }
+  .neg{ color:var(--red); }
 
-    .dot {
-      width: 7px;
-      height: 7px;
-      background: #0082FF;
-      border-radius: 50%;
-    }
-
-    .entry-title {
-      font-size: 14px;
-      color: #000;
-      font-weight: bold;
-    }
-
-    .entry-bank {
-      font-size: 14px;
-      color: #666;
-    }
-
-    .entry-amount {
-      font-size: 16px;
-    }
-
-    .positive {
-      color: #27AE60;
-    }
-
-    .negative {
-      color: #E74C3C;
-    }
-  </style>
+  .list::-webkit-scrollbar{ display:none; }
+  .list{ scrollbar-width:none; }
+</style>
 </head>
 
 <body>
-  <div class="container">
-    <div class="fixed-container">
-      <div class="header">Дохідний онлайн 16,75%</div>
-      <div class="fixed-section">
-        400 000.00 ₴
-        <div class="subtext">Депозит дійсний до: 07.11.2026</div>
+  <div class="app" id="app">
+
+    <!-- FIXED TOP -->
+    <div class="top">
+      <div class="nav">
+        <div class="back">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 5l-7 7 7 7"/>
+          </svg>
+        </div>
+        <div class="title">О.Депозит онлайн (% щомісячно)</div>
       </div>
-      <div class="icon-buttons">
-        <img src="buttons.jpg" alt="Кнопки" class="icon-buttons-img" />
+
+      <div class="amount">400 000.00 <span class="cur">₴</span></div>
+
+      <div class="valid">
+        <span class="label">Депозит дійсний до:</span>
+        <span class="date">31.12.2026</span>
+      </div>
+
+      <div class="actions">
+        <div class="action">
+          <div class="circle pink">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 4v11"/><path d="M7 11l5 5 5-5"/><path d="M5 20h14"/>
+            </svg>
+          </div>
+          <div class="cap">Поповнити<br>депозит</div>
+        </div>
+
+        <div class="action">
+          <div class="circle magenta">
+            <div class="dots"><i></i><i></i><i></i></div>
+          </div>
+          <div class="cap dark">Детальніше</div>
+        </div>
+
+        <div class="action">
+          <div class="circle pink">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 20V9"/><path d="M7 13l5-5 5 5"/><path d="M5 5h14"/>
+            </svg>
+          </div>
+          <div class="cap">Частково<br>зняти</div>
+        </div>
       </div>
     </div>
 
-    <div class="scrollable-content">
-
-      <div class="date-header">31 Серпня 2026</div>
-      <div class="entry">
-        <div class="entry-left">
-          <div class="blue-dots">
-            <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-          </div>
-          <div>
-            <div class="entry-title">Нарахування %</div>
-            <div class="entry-bank">Ідея Банк</div>
+    <!-- BOTTOM SHEET -->
+    <div class="sheet" id="sheet">
+      <div class="grabber-zone" id="grab">
+        <div class="grabber"></div>
+        <div class="sheet-head">
+          <div class="hdate">31 Липня 2026</div>
+          <div class="search">
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.2-3.2"/></svg>
           </div>
         </div>
-        <div class="entry-amount positive">5 690.41 ₴</div>
-      </div>
-      <div class="entry">
-        <div class="entry-left">
-          <div class="blue-dots">
-            <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-          </div>
-          <div>
-            <div class="entry-title">Утримання податків</div>
-            <div class="entry-bank">Ідея Банк</div>
-          </div>
-        </div>
-        <div class="entry-amount negative">-1 024.27 ₴</div>
-      </div>
-      <div class="entry">
-        <div class="entry-left">
-          <div class="blue-dots">
-            <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-          </div>
-          <div>
-            <div class="entry-title">Утримання податків</div>
-            <div class="entry-bank">Ідея Банк</div>
-          </div>
-        </div>
-        <div class="entry-amount negative">-284.52 ₴</div>
       </div>
 
-      <div class="date-header">31 Липня 2026</div>
-      <div class="entry">
-        <div class="entry-left">
-          <div class="blue-dots">
-            <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-          </div>
-          <div>
-            <div class="entry-title">Нарахування %</div>
-            <div class="entry-bank">Ідея Банк</div>
-          </div>
-        </div>
-        <div class="entry-amount positive">5 690.41 ₴</div>
-      </div>
-      <div class="entry">
-        <div class="entry-left">
-          <div class="blue-dots">
-            <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-          </div>
-          <div>
-            <div class="entry-title">Утримання податків</div>
-            <div class="entry-bank">Ідея Банк</div>
-          </div>
-        </div>
-        <div class="entry-amount negative">-1 024.27 ₴</div>
-      </div>
-      <div class="entry">
-        <div class="entry-left">
-          <div class="blue-dots">
-            <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-          </div>
-          <div>
-            <div class="entry-title">Утримання податків</div>
-            <div class="entry-bank">Ідея Банк</div>
-          </div>
-        </div>
-        <div class="entry-amount negative">-284.52 ₴</div>
-      </div>
+      <div class="list" id="list">
 
-      <div class="date-header">30 Червня 2026</div>
-      <div class="entry">
-        <div class="entry-left">
-          <div class="blue-dots">
-            <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-          </div>
-          <div>
-            <div class="entry-title">Нарахування %</div>
-            <div class="entry-bank">Ідея Банк</div>
-          </div>
-        </div>
-        <div class="entry-amount positive">5 506.85 ₴</div>
-      </div>
-      <div class="entry">
-        <div class="entry-left">
-          <div class="blue-dots">
-            <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-          </div>
-          <div>
-            <div class="entry-title">Утримання податків</div>
-            <div class="entry-bank">Ідея Банк</div>
-          </div>
-        </div>
-        <div class="entry-amount negative">-991.23 ₴</div>
-      </div>
-      <div class="entry">
-        <div class="entry-left">
-          <div class="blue-dots">
-            <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-          </div>
-          <div>
-            <div class="entry-title">Утримання податків</div>
-            <div class="entry-bank">Ідея Банк</div>
-          </div>
-        </div>
-        <div class="entry-amount negative">-275.34 ₴</div>
-      </div>
+        <div class="day">31 Серпня 2026</div>
+        <div class="row"><div class="row-left"><div class="dots4"><span></span><span></span><span></span><span></span></div><div><div class="row-title">Нарахування %</div><div class="row-bank">Ідея Банк</div></div></div><div class="row-amt pos">5 690.41 ₴</div></div>
+        <div class="row"><div class="row-left"><div class="dots4"><span></span><span></span><span></span><span></span></div><div><div class="row-title">Утримання податків</div><div class="row-bank">Ідея Банк</div></div></div><div class="row-amt neg">-1 024.27 ₴</div></div>
+        <div class="row"><div class="row-left"><div class="dots4"><span></span><span></span><span></span><span></span></div><div><div class="row-title">Утримання податків</div><div class="row-bank">Ідея Банк</div></div></div><div class="row-amt neg">-284.52 ₴</div></div>
 
-      <div class="date-header">31 Травня 2026</div>
-      <div class="entry">
-        <div class="entry-left">
-          <div class="blue-dots">
-            <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-          </div>
-          <div>
-            <div class="entry-title">Нарахування %</div>
-            <div class="entry-bank">Ідея Банк</div>
-          </div>
-        </div>
-        <div class="entry-amount positive">5 690.41 ₴</div>
-      </div>
-      <div class="entry">
-        <div class="entry-left">
-          <div class="blue-dots">
-            <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-          </div>
-          <div>
-            <div class="entry-title">Утримання податків</div>
-            <div class="entry-bank">Ідея Банк</div>
-          </div>
-        </div>
-        <div class="entry-amount negative">-1 024.27 ₴</div>
-      </div>
-      <div class="entry">
-        <div class="entry-left">
-          <div class="blue-dots">
-            <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-          </div>
-          <div>
-            <div class="entry-title">Утримання податків</div>
-            <div class="entry-bank">Ідея Банк</div>
-          </div>
-        </div>
-        <div class="entry-amount negative">-284.52 ₴</div>
-      </div>
+        <div class="day">31 Липня 2026</div>
+        <div class="row"><div class="row-left"><div class="dots4"><span></span><span></span><span></span><span></span></div><div><div class="row-title">Нарахування %</div><div class="row-bank">Ідея Банк</div></div></div><div class="row-amt pos">5 690.41 ₴</div></div>
+        <div class="row"><div class="row-left"><div class="dots4"><span></span><span></span><span></span><span></span></div><div><div class="row-title">Утримання податків</div><div class="row-bank">Ідея Банк</div></div></div><div class="row-amt neg">-1 024.27 ₴</div></div>
+        <div class="row"><div class="row-left"><div class="dots4"><span></span><span></span><span></span><span></span></div><div><div class="row-title">Утримання податків</div><div class="row-bank">Ідея Банк</div></div></div><div class="row-amt neg">-284.52 ₴</div></div>
 
-      <div class="date-header">30 Квітня 2026</div>
-      <div class="entry">
-        <div class="entry-left">
-          <div class="blue-dots">
-            <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-          </div>
-          <div>
-            <div class="entry-title">Нарахування %</div>
-            <div class="entry-bank">Ідея Банк</div>
-          </div>
-        </div>
-        <div class="entry-amount positive">5 506.85 ₴</div>
-      </div>
-      <div class="entry">
-        <div class="entry-left">
-          <div class="blue-dots">
-            <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-          </div>
-          <div>
-            <div class="entry-title">Утримання податків</div>
-            <div class="entry-bank">Ідея Банк</div>
-          </div>
-        </div>
-        <div class="entry-amount negative">-991.23 ₴</div>
-      </div>
-      <div class="entry">
-        <div class="entry-left">
-          <div class="blue-dots">
-            <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-          </div>
-          <div>
-            <div class="entry-title">Утримання податків</div>
-            <div class="entry-bank">Ідея Банк</div>
-          </div>
-        </div>
-        <div class="entry-amount negative">-275.34 ₴</div>
-      </div>
+        <div class="day">30 Червня 2026</div>
+        <div class="row"><div class="row-left"><div class="dots4"><span></span><span></span><span></span><span></span></div><div><div class="row-title">Нарахування %</div><div class="row-bank">Ідея Банк</div></div></div><div class="row-amt pos">5 506.85 ₴</div></div>
+        <div class="row"><div class="row-left"><div class="dots4"><span></span><span></span><span></span><span></span></div><div><div class="row-title">Утримання податків</div><div class="row-bank">Ідея Банк</div></div></div><div class="row-amt neg">-991.23 ₴</div></div>
+        <div class="row"><div class="row-left"><div class="dots4"><span></span><span></span><span></span><span></span></div><div><div class="row-title">Утримання податків</div><div class="row-bank">Ідея Банк</div></div></div><div class="row-amt neg">-275.34 ₴</div></div>
 
-      <div class="date-header">31 Березня 2026</div>
-      <div class="entry">
-        <div class="entry-left">
-          <div class="blue-dots">
-            <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-          </div>
-          <div>
-            <div class="entry-title">Нарахування %</div>
-            <div class="entry-bank">Ідея Банк</div>
-          </div>
-        </div>
-        <div class="entry-amount positive">5 690.41 ₴</div>
-      </div>
-      <div class="entry">
-        <div class="entry-left">
-          <div class="blue-dots">
-            <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-          </div>
-          <div>
-            <div class="entry-title">Утримання податків</div>
-            <div class="entry-bank">Ідея Банк</div>
-          </div>
-        </div>
-        <div class="entry-amount negative">-1 024.27 ₴</div>
-      </div>
-      <div class="entry">
-        <div class="entry-left">
-          <div class="blue-dots">
-            <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-          </div>
-          <div>
-            <div class="entry-title">Утримання податків</div>
-            <div class="entry-bank">Ідея Банк</div>
-          </div>
-        </div>
-        <div class="entry-amount negative">-284.52 ₴</div>
-      </div>
+        <div class="day">31 Травня 2026</div>
+        <div class="row"><div class="row-left"><div class="dots4"><span></span><span></span><span></span><span></span></div><div><div class="row-title">Нарахування %</div><div class="row-bank">Ідея Банк</div></div></div><div class="row-amt pos">5 690.41 ₴</div></div>
+        <div class="row"><div class="row-left"><div class="dots4"><span></span><span></span><span></span><span></span></div><div><div class="row-title">Утримання податків</div><div class="row-bank">Ідея Банк</div></div></div><div class="row-amt neg">-1 024.27 ₴</div></div>
+        <div class="row"><div class="row-left"><div class="dots4"><span></span><span></span><span></span><span></span></div><div><div class="row-title">Утримання податків</div><div class="row-bank">Ідея Банк</div></div></div><div class="row-amt neg">-284.52 ₴</div></div>
 
-      <div class="date-header">28 Лютого 2026</div>
-      <div class="entry">
-        <div class="entry-left">
-          <div class="blue-dots">
-            <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-          </div>
-          <div>
-            <div class="entry-title">Нарахування %</div>
-            <div class="entry-bank">Ідея Банк</div>
-          </div>
-        </div>
-        <div class="entry-amount positive">5 139.73 ₴</div>
-      </div>
-      <div class="entry">
-        <div class="entry-left">
-          <div class="blue-dots">
-            <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-          </div>
-          <div>
-            <div class="entry-title">Утримання податків</div>
-            <div class="entry-bank">Ідея Банк</div>
-          </div>
-        </div>
-        <div class="entry-amount negative">-925.15 ₴</div>
-      </div>
-      <div class="entry">
-        <div class="entry-left">
-          <div class="blue-dots">
-            <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-          </div>
-          <div>
-            <div class="entry-title">Утримання податків</div>
-            <div class="entry-bank">Ідея Банк</div>
-          </div>
-        </div>
-        <div class="entry-amount negative">-256.99 ₴</div>
-      </div>
+        <div class="day">30 Квітня 2026</div>
+        <div class="row"><div class="row-left"><div class="dots4"><span></span><span></span><span></span><span></span></div><div><div class="row-title">Нарахування %</div><div class="row-bank">Ідея Банк</div></div></div><div class="row-amt pos">5 506.85 ₴</div></div>
+        <div class="row"><div class="row-left"><div class="dots4"><span></span><span></span><span></span><span></span></div><div><div class="row-title">Утримання податків</div><div class="row-bank">Ідея Банк</div></div></div><div class="row-amt neg">-991.23 ₴</div></div>
+        <div class="row"><div class="row-left"><div class="dots4"><span></span><span></span><span></span><span></span></div><div><div class="row-title">Утримання податків</div><div class="row-bank">Ідея Банк</div></div></div><div class="row-amt neg">-275.34 ₴</div></div>
 
-      <div class="date-header">31 Січня 2026</div>
-      <div class="entry">
-        <div class="entry-left">
-          <div class="blue-dots">
-            <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-          </div>
-          <div>
-            <div class="entry-title">Нарахування %</div>
-            <div class="entry-bank">Ідея Банк</div>
-          </div>
-        </div>
-        <div class="entry-amount positive">5 690.41 ₴</div>
-      </div>
-      <div class="entry">
-        <div class="entry-left">
-          <div class="blue-dots">
-            <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-          </div>
-          <div>
-            <div class="entry-title">Утримання податків</div>
-            <div class="entry-bank">Ідея Банк</div>
-          </div>
-        </div>
-        <div class="entry-amount negative">-1 024.27 ₴</div>
-      </div>
-      <div class="entry">
-        <div class="entry-left">
-          <div class="blue-dots">
-            <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-          </div>
-          <div>
-            <div class="entry-title">Утримання податків</div>
-            <div class="entry-bank">Ідея Банк</div>
-          </div>
-        </div>
-        <div class="entry-amount negative">-284.52 ₴</div>
-      </div>
-      <div class="date-header">31 Грудня 2025</div>
-      <div class="entry">
-        <div class="entry-left">
-          <div class="blue-dots">
-            <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-          </div>
-          <div>
-            <div class="entry-title">Нарахування %</div>
-            <div class="entry-bank">Ідея Банк</div>
-          </div>
-        </div>
-        <div class="entry-amount positive">5 690.79 ₴</div>
-      </div>
+        <div class="day">31 Березня 2026</div>
+        <div class="row"><div class="row-left"><div class="dots4"><span></span><span></span><span></span><span></span></div><div><div class="row-title">Нарахування %</div><div class="row-bank">Ідея Банк</div></div></div><div class="row-amt pos">5 690.41 ₴</div></div>
+        <div class="row"><div class="row-left"><div class="dots4"><span></span><span></span><span></span><span></span></div><div><div class="row-title">Утримання податків</div><div class="row-bank">Ідея Банк</div></div></div><div class="row-amt neg">-1 024.27 ₴</div></div>
+        <div class="row"><div class="row-left"><div class="dots4"><span></span><span></span><span></span><span></span></div><div><div class="row-title">Утримання податків</div><div class="row-bank">Ідея Банк</div></div></div><div class="row-amt neg">-284.52 ₴</div></div>
 
-      <div class="entry">
-        <div class="entry-left">
-          <div class="blue-dots">
-            <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-          </div>
-          <div>
-            <div class="entry-title">Утримання податків</div>
-            <div class="entry-bank">Ідея Банк</div>
-          </div>
-        </div>
-        <div class="entry-amount negative">-1 024.27 ₴</div>
-      </div>
+        <div class="day">28 Лютого 2026</div>
+        <div class="row"><div class="row-left"><div class="dots4"><span></span><span></span><span></span><span></span></div><div><div class="row-title">Нарахування %</div><div class="row-bank">Ідея Банк</div></div></div><div class="row-amt pos">5 139.73 ₴</div></div>
+        <div class="row"><div class="row-left"><div class="dots4"><span></span><span></span><span></span><span></span></div><div><div class="row-title">Утримання податків</div><div class="row-bank">Ідея Банк</div></div></div><div class="row-amt neg">-925.15 ₴</div></div>
+        <div class="row"><div class="row-left"><div class="dots4"><span></span><span></span><span></span><span></span></div><div><div class="row-title">Утримання податків</div><div class="row-bank">Ідея Банк</div></div></div><div class="row-amt neg">-256.99 ₴</div></div>
 
-      <div class="entry">
-        <div class="entry-left">
-          <div class="blue-dots">
-            <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-          </div>
-          <div>
-            <div class="entry-title">Утримання податків</div>
-            <div class="entry-bank">Ідея Банк</div>
-          </div>
-        </div>
-        <div class="entry-amount negative">-284.52 ₴</div>
-      </div>
+        <div class="day">31 Січня 2026</div>
+        <div class="row"><div class="row-left"><div class="dots4"><span></span><span></span><span></span><span></span></div><div><div class="row-title">Нарахування %</div><div class="row-bank">Ідея Банк</div></div></div><div class="row-amt pos">5 690.41 ₴</div></div>
+        <div class="row"><div class="row-left"><div class="dots4"><span></span><span></span><span></span><span></span></div><div><div class="row-title">Утримання податків</div><div class="row-bank">Ідея Банк</div></div></div><div class="row-amt neg">-1 024.27 ₴</div></div>
+        <div class="row"><div class="row-left"><div class="dots4"><span></span><span></span><span></span><span></span></div><div><div class="row-title">Утримання податків</div><div class="row-bank">Ідея Банк</div></div></div><div class="row-amt neg">-284.52 ₴</div></div>
 
-      <div class="date-header">30 Листопада 2025</div>
-      <div class="entry">
-        <div class="entry-left">
-          <div class="blue-dots">
-            <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-          </div>
-          <div>
-            <div class="entry-title">Нарахування %</div>
-            <div class="entry-bank">Ідея Банк</div>
-          </div>
-        </div>
-        <div class="entry-amount positive">4 404.11 ₴</div>
-      </div>
+        <div class="day">31 Грудня 2025</div>
+        <div class="row"><div class="row-left"><div class="dots4"><span></span><span></span><span></span><span></span></div><div><div class="row-title">Нарахування %</div><div class="row-bank">Ідея Банк</div></div></div><div class="row-amt pos">5 690.79 ₴</div></div>
+        <div class="row"><div class="row-left"><div class="dots4"><span></span><span></span><span></span><span></span></div><div><div class="row-title">Утримання податків</div><div class="row-bank">Ідея Банк</div></div></div><div class="row-amt neg">-1 024.27 ₴</div></div>
+        <div class="row"><div class="row-left"><div class="dots4"><span></span><span></span><span></span><span></span></div><div><div class="row-title">Утримання податків</div><div class="row-bank">Ідея Банк</div></div></div><div class="row-amt neg">-284.52 ₴</div></div>
 
-      <div class="entry">
-        <div class="entry-left">
-          <div class="blue-dots">
-            <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-          </div>
-          <div>
-            <div class="entry-title">Утримання податків</div>
-            <div class="entry-bank">Ідея Банк</div>
-          </div>
-        </div>
-        <div class="entry-amount negative">-793.04 ₴</div>
-      </div>
+        <div class="day">30 Листопада 2025</div>
+        <div class="row"><div class="row-left"><div class="dots4"><span></span><span></span><span></span><span></span></div><div><div class="row-title">Нарахування %</div><div class="row-bank">Ідея Банк</div></div></div><div class="row-amt pos">4 404.11 ₴</div></div>
+        <div class="row"><div class="row-left"><div class="dots4"><span></span><span></span><span></span><span></span></div><div><div class="row-title">Утримання податків</div><div class="row-bank">Ідея Банк</div></div></div><div class="row-amt neg">-793.04 ₴</div></div>
+        <div class="row"><div class="row-left"><div class="dots4"><span></span><span></span><span></span><span></span></div><div><div class="row-title">Утримання податків</div><div class="row-bank">Ідея Банк</div></div></div><div class="row-amt neg">-221.07 ₴</div></div>
 
-      <div class="entry">
-        <div class="entry-left">
-          <div class="blue-dots">
-            <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-          </div>
-          <div>
-            <div class="entry-title">Утримання податків</div>
-            <div class="entry-bank">Ідея Банк</div>
-          </div>
-        </div>
-        <div class="entry-amount negative">-221.07 ₴</div>
-      </div>
+        <div class="day">06 Листопада 2025</div>
+        <div class="row"><div class="row-left"><div class="dots4"><span></span><span></span><span></span><span></span></div><div><div class="row-title">Зарахування коштів</div><div class="row-bank">Ідея Банк</div></div></div><div class="row-amt pos">400 000.00 ₴</div></div>
 
-      <div class="date-header">06 Листопада 2025</div>
-      <div class="entry">
-        <div class="entry-left">
-          <div class="blue-dots">
-            <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-          </div>
-          <div>
-            <div class="entry-title">Зарахування коштів</div>
-            <div class="entry-bank">Ідея Банк</div>
-          </div>
-        </div>
-        <div class="entry-amount positive">400 000.00 ₴</div>
       </div>
-
     </div>
   </div>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const scrollableContent = document.querySelector(".scrollable-content");
+<script>
+(function(){
+  const app   = document.getElementById('app');
+  const sheet = document.getElementById('sheet');
+  const grab  = document.getElementById('grab');
+  const list  = document.getElementById('list');
 
-      scrollableContent.addEventListener("scroll", function () {
-        const threshold = 50;
-        if (scrollableContent.scrollTop > threshold) {
-          scrollableContent.classList.add("scrolled");
-        } else {
-          scrollableContent.classList.remove("scrolled");
-        }
-      });
-    });
-  </script>
+  // Two snap positions:
+  //  collapsed -> sheet sits low, top area (amount + buttons) visible
+  //  expanded  -> sheet covers full screen
+  let COLLAPSED = 0;
+  const EXPANDED = 0;
+
+  function computeCollapsed(){
+    // distance from top of screen to just above the action buttons
+    COLLAPSED = Math.round(app.clientHeight * 0.52);
+    sheet.style.setProperty('--sheet-collapsed', COLLAPSED + 'px');
+  }
+  computeCollapsed();
+  window.addEventListener('resize', computeCollapsed);
+
+  let state = 'collapsed';          // 'collapsed' | 'expanded'
+  let dragging = false;
+  let startY = 0;
+  let startTranslate = 0;
+  let currentTranslate = COLLAPSED;
+  let pointerId = null;
+
+  function setTranslate(px, withTransition){
+    sheet.style.transition = withTransition ? 'transform .45s cubic-bezier(.22,1,.36,1)' : 'none';
+    sheet.style.transform = 'translateY(' + px + 'px)';
+    currentTranslate = px;
+  }
+
+  function snapTo(target){
+    state = target;
+    if(target === 'expanded'){
+      setTranslate(EXPANDED, true);
+      list.classList.remove('locked');
+    }else{
+      setTranslate(COLLAPSED, true);
+      list.classList.add('locked');
+      list.scrollTop = 0;
+    }
+  }
+
+  // start collapsed
+  list.classList.add('locked');
+
+  // ----- drag from the grabber / header (always works) -----
+  function onDown(e){
+    dragging = true;
+    pointerId = e.pointerId;
+    startY = e.clientY;
+    startTranslate = currentTranslate;
+    sheet.style.transition = 'none';
+    grab.setPointerCapture && grab.setPointerCapture(pointerId);
+  }
+  function onMove(e){
+    if(!dragging) return;
+    let dy = e.clientY - startY;
+    let next = startTranslate + dy;
+    if(next < EXPANDED)  next = EXPANDED - Math.pow(EXPANDED - next, .82); // rubber band top
+    if(next > COLLAPSED) next = COLLAPSED + (next - COLLAPSED) * .35;      // rubber band bottom
+    setTranslate(next, false);
+  }
+  function onUp(e){
+    if(!dragging) return;
+    dragging = false;
+    const midpoint = COLLAPSED * 0.5;
+    if(currentTranslate < midpoint) snapTo('expanded');
+    else snapTo('collapsed');
+  }
+  grab.addEventListener('pointerdown', onDown);
+  grab.addEventListener('pointermove', onMove);
+  grab.addEventListener('pointerup', onUp);
+  grab.addEventListener('pointercancel', onUp);
+
+  // ----- drag from the list itself -----
+  // If collapsed: any upward drag expands the sheet.
+  // If expanded & list scrolled to top: downward drag collapses it.
+  let listDragging = false;
+  let listStartY = 0;
+  let listStartTranslate = 0;
+  let decided = false;
+  let mode = null; // 'sheet' | 'scroll'
+
+  list.addEventListener('pointerdown', function(e){
+    listDragging = true;
+    decided = false;
+    mode = null;
+    listStartY = e.clientY;
+    listStartTranslate = currentTranslate;
+  });
+
+  list.addEventListener('pointermove', function(e){
+    if(!listDragging) return;
+    const dy = e.clientY - listStartY;
+
+    if(!decided){
+      if(Math.abs(dy) < 6) return;
+      if(state === 'collapsed'){
+        // collapsed: dragging up should raise the sheet
+        mode = (dy < 0) ? 'sheet' : 'scroll';
+      }else{
+        // expanded: only take over as sheet-drag if pulling down at very top
+        if(dy > 0 && list.scrollTop <= 0){ mode = 'sheet'; }
+        else { mode = 'scroll'; }
+      }
+      decided = true;
+      if(mode === 'sheet'){ sheet.style.transition = 'none'; }
+    }
+
+    if(mode === 'sheet'){
+      e.preventDefault();
+      let next = listStartTranslate + dy;
+      if(next < EXPANDED)  next = EXPANDED - Math.pow(EXPANDED - next, .82);
+      if(next > COLLAPSED) next = COLLAPSED + (next - COLLAPSED) * .35;
+      setTranslate(next, false);
+    }
+  }, {passive:false});
+
+  function endListDrag(){
+    if(!listDragging) return;
+    listDragging = false;
+    if(mode === 'sheet'){
+      const midpoint = COLLAPSED * 0.5;
+      if(currentTranslate < midpoint) snapTo('expanded');
+      else snapTo('collapsed');
+    }
+    mode = null;
+    decided = false;
+  }
+  list.addEventListener('pointerup', endListDrag);
+  list.addEventListener('pointercancel', endListDrag);
+
+  // tap the collapsed header text area to expand as well
+  grab.addEventListener('click', function(){
+    if(state === 'collapsed' && !dragging) snapTo('expanded');
+  });
+})();
+</script>
 </body>
 </html>
