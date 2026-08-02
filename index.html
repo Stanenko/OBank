@@ -70,12 +70,12 @@
 
   .amount{
     margin-top:52px;
-    font-size:44px;
-    font-weight:700;
-    letter-spacing:-1px;
+    font-size:39px;
+    font-weight:600;
+    letter-spacing:-.5px;
     line-height:1;
   }
-  .amount .cur{ font-weight:700; }
+  .amount .cur{ font-weight:600; }
 
   .valid{
     margin-top:20px;
@@ -156,11 +156,20 @@
     flex:0 0 auto;
     display:flex;
     align-items:center;
-    justify-content:flex-end;
+    justify-content:center;
     position:relative;
-    padding:6px 16px 4px;
+    padding:8px 16px 6px;
+  }
+  .sheet-head .hdate{
+    font-size:15px;
+    color:var(--muted);
+    font-weight:400;
   }
   .sheet-head .search{
+    position:absolute;
+    right:16px;
+    top:50%;
+    transform:translateY(-50%);
     width:44px; height:44px;
     border-radius:50%;
     background:#F4F4F7;
@@ -184,6 +193,7 @@
     padding:20px 0 16px;
   }
   .list > .day:first-child{ padding-top:6px; }
+  .list > .row:first-child{ padding-top:6px; }
 
   .row{
     display:flex;
@@ -232,7 +242,7 @@
 
       <div class="valid">
         <span class="label">Депозит дійсний до:</span>
-        <span class="date">31.12.2026</span>
+        <span class="date">07.11.2026</span>
       </div>
 
       <div class="actions">
@@ -268,6 +278,7 @@
       <div class="grabber-zone" id="grab">
         <div class="grabber"></div>
         <div class="sheet-head">
+          <div class="hdate">31 Серпня 2026</div>
           <div class="search">
             <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.2-3.2"/></svg>
           </div>
@@ -276,7 +287,6 @@
 
       <div class="list" id="list">
 
-        <div class="day">31 Серпня 2026</div>
         <div class="row"><div class="row-left"><div class="dots4"><span></span><span></span><span></span><span></span></div><div><div class="row-title">Нарахування %</div><div class="row-bank">Ідея Банк</div></div></div><div class="row-amt pos">5 690.41 ₴</div></div>
         <div class="row"><div class="row-left"><div class="dots4"><span></span><span></span><span></span><span></span></div><div><div class="row-title">Утримання податків</div><div class="row-bank">Ідея Банк</div></div></div><div class="row-amt neg">-1 024.27 ₴</div></div>
         <div class="row"><div class="row-left"><div class="dots4"><span></span><span></span><span></span><span></span></div><div><div class="row-title">Утримання податків</div><div class="row-bank">Ідея Банк</div></div></div><div class="row-amt neg">-284.52 ₴</div></div>
@@ -340,21 +350,17 @@
   const grab  = document.getElementById('grab');
   const list  = document.getElementById('list');
 
-  // Two snap positions:
-  //  collapsed -> sheet sits low, top area (amount + buttons) visible
-  //  expanded  -> sheet covers full screen
   let COLLAPSED = 0;
   const EXPANDED = 0;
 
   function computeCollapsed(){
-    // distance from top of screen to just above the action buttons
     COLLAPSED = Math.round(app.clientHeight * 0.52);
     sheet.style.setProperty('--sheet-collapsed', COLLAPSED + 'px');
   }
   computeCollapsed();
   window.addEventListener('resize', computeCollapsed);
 
-  let state = 'collapsed';          // 'collapsed' | 'expanded'
+  let state = 'collapsed';
   let dragging = false;
   let startY = 0;
   let startTranslate = 0;
@@ -379,10 +385,8 @@
     }
   }
 
-  // start collapsed
   list.classList.add('locked');
 
-  // ----- drag from the grabber / header (always works) -----
   function onDown(e){
     dragging = true;
     pointerId = e.pointerId;
@@ -395,8 +399,8 @@
     if(!dragging) return;
     let dy = e.clientY - startY;
     let next = startTranslate + dy;
-    if(next < EXPANDED)  next = EXPANDED - Math.pow(EXPANDED - next, .82); // rubber band top
-    if(next > COLLAPSED) next = COLLAPSED + (next - COLLAPSED) * .35;      // rubber band bottom
+    if(next < EXPANDED)  next = EXPANDED - Math.pow(EXPANDED - next, .82);
+    if(next > COLLAPSED) next = COLLAPSED + (next - COLLAPSED) * .35;
     setTranslate(next, false);
   }
   function onUp(e){
@@ -411,14 +415,11 @@
   grab.addEventListener('pointerup', onUp);
   grab.addEventListener('pointercancel', onUp);
 
-  // ----- drag from the list itself -----
-  // If collapsed: any upward drag expands the sheet.
-  // If expanded & list scrolled to top: downward drag collapses it.
   let listDragging = false;
   let listStartY = 0;
   let listStartTranslate = 0;
   let decided = false;
-  let mode = null; // 'sheet' | 'scroll'
+  let mode = null;
 
   list.addEventListener('pointerdown', function(e){
     listDragging = true;
@@ -435,10 +436,8 @@
     if(!decided){
       if(Math.abs(dy) < 6) return;
       if(state === 'collapsed'){
-        // collapsed: dragging up should raise the sheet
         mode = (dy < 0) ? 'sheet' : 'scroll';
       }else{
-        // expanded: only take over as sheet-drag if pulling down at very top
         if(dy > 0 && list.scrollTop <= 0){ mode = 'sheet'; }
         else { mode = 'scroll'; }
       }
@@ -469,7 +468,6 @@
   list.addEventListener('pointerup', endListDrag);
   list.addEventListener('pointercancel', endListDrag);
 
-  // tap the collapsed header text area to expand as well
   grab.addEventListener('click', function(){
     if(state === 'collapsed' && !dragging) snapTo('expanded');
   });
