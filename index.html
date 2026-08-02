@@ -64,18 +64,18 @@
   .nav .back svg{ width:24px; height:24px; stroke:#111; }
   .nav .title{
     font-size:21px;
-    font-weight:700;
+    font-weight:600;
     letter-spacing:-.2px;
   }
 
   .amount{
     margin-top:52px;
-    font-size:46px;
-    font-weight:800;
+    font-size:44px;
+    font-weight:700;
     letter-spacing:-1px;
     line-height:1;
   }
-  .amount .cur{ font-weight:800; }
+  .amount .cur{ font-weight:700; }
 
   .valid{
     margin-top:20px;
@@ -156,18 +156,11 @@
     flex:0 0 auto;
     display:flex;
     align-items:center;
-    justify-content:center;
+    justify-content:flex-end;
     position:relative;
-    padding:10px 20px 14px;
-  }
-  .sheet-head .hdate{
-    font-size:16px;
-    color:var(--muted);
-    font-weight:400;
+    padding:6px 16px 4px;
   }
   .sheet-head .search{
-    position:absolute;
-    right:16px; top:2px;
     width:44px; height:44px;
     border-radius:50%;
     background:#F4F4F7;
@@ -187,15 +180,16 @@
   .day{
     text-align:center;
     color:var(--muted);
-    font-size:16px;
-    padding:26px 0 20px;
+    font-size:15px;
+    padding:20px 0 16px;
   }
+  .list > .day:first-child{ padding-top:6px; }
 
   .row{
     display:flex;
     align-items:center;
     justify-content:space-between;
-    padding:14px 0;
+    padding:12px 0;
   }
   .row-left{ display:flex; align-items:center; gap:16px; }
 
@@ -208,10 +202,10 @@
   }
   .dots4 span{ width:10px; height:10px; border-radius:50%; background:var(--blue); }
 
-  .row-title{ font-size:18px; font-weight:700; letter-spacing:-.2px; }
-  .row-bank{ font-size:15px; color:var(--muted); margin-top:3px; }
+  .row-title{ font-size:17px; font-weight:600; letter-spacing:-.2px; }
+  .row-bank{ font-size:15px; color:var(--muted); margin-top:3px; font-weight:400; }
 
-  .row-amt{ font-size:18px; font-weight:600; white-space:nowrap; }
+  .row-amt{ font-size:17px; font-weight:400; white-space:nowrap; }
   .pos{ color:var(--green); }
   .neg{ color:var(--red); }
 
@@ -274,7 +268,6 @@
       <div class="grabber-zone" id="grab">
         <div class="grabber"></div>
         <div class="sheet-head">
-          <div class="hdate">31 Липня 2026</div>
           <div class="search">
             <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.2-3.2"/></svg>
           </div>
