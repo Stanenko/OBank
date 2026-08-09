@@ -129,8 +129,8 @@
   .sheet{
     position:absolute;
     left:0; right:0;
-    top:0;
-    height:100dvh;
+    top:env(safe-area-inset-top);
+    height:calc(100dvh - env(safe-area-inset-top) + 60px);
     background:var(--sheet);
     border-top-left-radius:18px;
     border-top-right-radius:18px;
@@ -184,7 +184,7 @@
     flex:1 1 auto;
     overflow-y:auto;
     -webkit-overflow-scrolling:touch;
-    padding:0 20px calc(env(safe-area-inset-bottom) + 12px);
+    padding:0 20px env(safe-area-inset-bottom);
     overscroll-behavior:contain;
   }
   .list.locked{ overflow:hidden; }
