@@ -238,22 +238,33 @@
     max-width:480px;
     margin:0 auto;
     height:100dvh;
+    overflow:hidden;
+    background:var(--bg);
+  }
+
+  .dp-top{
+    position:absolute;
+    top:0; left:0; right:0;
+    padding:calc(6px + env(safe-area-inset-top)) 20px 0;
+    z-index:2;
+    background:var(--bg);
+  }
+
+  .dp-scroll{
+    position:absolute;
+    top:calc(54px + env(safe-area-inset-top));
+    left:0; right:0; bottom:0;
     overflow-y:auto;
     -webkit-overflow-scrolling:touch;
-    background:var(--bg);
-    display:flex;
-    flex-direction:column;
   }
-  #detailScreen::-webkit-scrollbar{ display:none; }
-  #detailScreen{ scrollbar-width:none; }
+  .dp-scroll::-webkit-scrollbar{ display:none; }
+  .dp-scroll{ scrollbar-width:none; }
 
   .dp-nav{
     display:flex;
     align-items:center;
     gap:18px;
     height:48px;
-    padding:calc(6px + env(safe-area-inset-top)) 20px 0;
-    flex:0 0 auto;
   }
   .dp-back{
     width:26px; height:26px;
@@ -269,7 +280,7 @@
   }
 
   .dp-amount{
-    margin-top:18px;
+    margin-top:8px;
     text-align:center;
     font-size:37px;
     font-weight:700;
@@ -490,14 +501,18 @@
   <!-- ===================== DETAIL SCREEN ===================== -->
   <div id="detailScreen" class="hidden">
 
-    <div class="dp-nav">
-      <div class="dp-back" onclick="showMain()">
-        <svg viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M15 5l-7 7 7 7"/>
-        </svg>
+    <div class="dp-top">
+      <div class="dp-nav">
+        <div class="dp-back" onclick="showMain()">
+          <svg viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 5l-7 7 7 7"/>
+          </svg>
+        </div>
+        <div class="dp-title">О.Депозит онлайн (% щомісячно)</div>
       </div>
-      <div class="dp-title">О.Депозит онлайн (% щомісячно)</div>
     </div>
+
+    <div class="dp-scroll" id="dpScroll">
 
     <div class="dp-amount">400 000.00 ₴</div>
 
@@ -603,6 +618,7 @@
         </div>
       </div>
 
+    </div>
     </div>
   </div>
 
@@ -741,7 +757,8 @@ function showDetail(){
   document.getElementById('app').classList.add('hidden');
   var d = document.getElementById('detailScreen');
   d.classList.remove('hidden');
-  d.scrollTop = 0;
+  var s = document.getElementById('dpScroll');
+  if(s) s.scrollTop = 0;
   try{ history.pushState({screen:'detail'}, ''); }catch(e){}
 }
 function showMain(){
