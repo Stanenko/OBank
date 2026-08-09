@@ -3,7 +3,6 @@
 <head>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="О.Депозит">
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
@@ -49,7 +48,7 @@
   .top{
     position:absolute;
     top:0; left:0; right:0;
-    padding:6px 20px 0;
+    padding:calc(6px + env(safe-area-inset-top)) 20px 0;
     z-index:1;
   }
 
@@ -357,7 +356,7 @@
   const EXPANDED = 0;
 
   function computeCollapsed(){
-    COLLAPSED = Math.round(app.clientHeight * 0.63);
+    COLLAPSED = Math.round(app.clientHeight * 0.55);
     sheet.style.setProperty('--sheet-collapsed', COLLAPSED + 'px');
   }
   computeCollapsed();
